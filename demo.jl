@@ -32,7 +32,6 @@ cont = supertype(Normal) |> subtypes
 		dist()
 		dist
 	catch e
-		@show dist
 	end
 	end 
 	for dist in cont]
@@ -48,7 +47,6 @@ disc = supertype(Binomial) |> subtypes
 		dist()
 		dist
 	catch e
-		@show dist
 	end
 	end 
 	for dist in disc]
@@ -96,7 +94,10 @@ md"Choose the number of random walkers: $(@bind walkers NumberField(1:5, default
 params= fieldnames(dist)
 
 # ╔═╡ 6e0466dc-00da-4701-a6c0-83c75cae559d
+# ╠═╡ disabled = true
+#=╠═╡
 @bind params[i] Slider(1:5)
+  ╠═╡ =#
 
 # ╔═╡ 20beb2f7-2b80-445e-ac47-43e6e53d1757
 begin
@@ -1187,8 +1188,8 @@ version = "1.4.1+0"
 # ╔═╡ Cell order:
 # ╠═66503924-3fc8-4883-8236-f82ab711a329
 # ╠═f63aa280-bba1-11ed-1c22-e3bec77db2a8
-# ╠═29c169f4-b2d8-49f1-9211-1e3991e47eef
-# ╠═c783fbfb-8fc7-4ea2-8528-232792a3dca9
+# ╟─29c169f4-b2d8-49f1-9211-1e3991e47eef
+# ╟─c783fbfb-8fc7-4ea2-8528-232792a3dca9
 # ╟─7c040089-135c-45ac-ab09-97b087f65b99
 # ╟─059a943d-bd58-44e6-ad7c-d4aa2d3ba361
 # ╟─cc9a3dae-3ba1-4108-bea1-4cbff7655779
@@ -1196,7 +1197,7 @@ version = "1.4.1+0"
 # ╟─31f77545-ba14-41f7-a513-31e6f691e62e
 # ╟─c13e8e8c-5152-49c8-81b3-d8d96563f222
 # ╠═17467962-e92f-4c71-8ab9-6bf60ded4a86
-# ╠═6e0466dc-00da-4701-a6c0-83c75cae559d
+# ╟─6e0466dc-00da-4701-a6c0-83c75cae559d
 # ╠═20beb2f7-2b80-445e-ac47-43e6e53d1757
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
