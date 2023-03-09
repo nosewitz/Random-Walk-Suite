@@ -1,9 +1,6 @@
 ### A Pluto.jl notebook ###
 # v0.19.9
 
-#> [frontmatter]
-#> title = "Capstone Project"
-
 using Markdown
 using InteractiveUtils
 
@@ -26,9 +23,39 @@ end
 # ╔═╡ f63aa280-bba1-11ed-1c22-e3bec77db2a8
 includet("random_walk.jl")
 
+# ╔═╡ 29c169f4-b2d8-49f1-9211-1e3991e47eef
+begin
+cont = supertype(Normal) |> subtypes 
+
+	[begin 
+	try
+		dist()
+		dist
+	catch e
+	end
+	end 
+	for dist in cont]
+
+end
+
+# ╔═╡ c783fbfb-8fc7-4ea2-8528-232792a3dca9
+begin
+disc = supertype(Binomial) |> subtypes 
+
+	[begin 
+	try
+		dist()
+		dist
+	catch e
+	end
+	end 
+	for dist in disc]
+
+end
+
 # ╔═╡ 7c040089-135c-45ac-ab09-97b087f65b99
 # ╠═╡ show_logs = false
-plotly();
+plotly()
 
 # ╔═╡ 059a943d-bd58-44e6-ad7c-d4aa2d3ba361
 
@@ -58,35 +85,25 @@ md"Choose the number of steps for each walker:  $(@bind steps NumberField(10:10:
 md"""Choose the dimension of your walk: $(@bind dim Select([2 => "2D", 3 => "3D"]))"""
 
 # ╔═╡ 31f77545-ba14-41f7-a513-31e6f691e62e
-begin 
-
-cont = supertype(Normal) |> subtypes 
-disc = supertype(Binomial) |> subtypes 
-
-
 md"""Choose a distribution (or none for discrete jumps): $(@bind dist Select([cont; disc]))"""
-
-end
 
 # ╔═╡ c13e8e8c-5152-49c8-81b3-d8d96563f222
 md"Choose the number of random walkers: $(@bind walkers NumberField(1:5, default=1))"
 
-# ╔═╡ c1d9ebbd-d4be-4f2f-9d05-c348fcfcd09f
-md"Input parameters $(fieldnames(dist)) for your distribution: $(@bind pr TextField()) )"
+# ╔═╡ 17467962-e92f-4c71-8ab9-6bf60ded4a86
+params= fieldnames(dist)
 
-
-# ╔═╡ a68b5670-724d-422f-99d0-bb4494fbd753
-parameters = pr |> x -> split(x, ",") .|> x -> tryparse(Float64, x);
+# ╔═╡ 6e0466dc-00da-4701-a6c0-83c75cae559d
+# ╠═╡ disabled = true
+#=╠═╡
+@bind params[i] Slider(1:5)
+  ╠═╡ =#
 
 # ╔═╡ 20beb2f7-2b80-445e-ac47-43e6e53d1757
 begin
-	try
-		
 	theme(tema)	
-	Main.randomWalkPlot(steps, dim, walkers, dist(parameters...))
-	catch e
-		md"Please specify parameters for your distribution."
-	end
+	Main.randomWalkPlot(steps, dim, walkers, dist())
+	
 end
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
@@ -201,9 +218,9 @@ version = "0.12.10"
 
 [[deps.Compat]]
 deps = ["Dates", "LinearAlgebra", "UUIDs"]
-git-tree-sha1 = "7a60c856b9fa189eb34f5f8a6f6b5529b7942957"
+git-tree-sha1 = "61fdd77467a5c3ad071ef8277ac6bd6af7dd4c04"
 uuid = "34da2185-b29b-5c13-b0c7-acf172513d20"
-version = "4.6.1"
+version = "4.6.0"
 
 [[deps.CompilerSupportLibraries_jll]]
 deps = ["Artifacts", "Libdl"]
@@ -1171,14 +1188,16 @@ version = "1.4.1+0"
 # ╔═╡ Cell order:
 # ╠═66503924-3fc8-4883-8236-f82ab711a329
 # ╠═f63aa280-bba1-11ed-1c22-e3bec77db2a8
-# ╠═7c040089-135c-45ac-ab09-97b087f65b99
+# ╟─29c169f4-b2d8-49f1-9211-1e3991e47eef
+# ╟─c783fbfb-8fc7-4ea2-8528-232792a3dca9
+# ╟─7c040089-135c-45ac-ab09-97b087f65b99
 # ╟─059a943d-bd58-44e6-ad7c-d4aa2d3ba361
 # ╟─cc9a3dae-3ba1-4108-bea1-4cbff7655779
 # ╟─e43367b8-154c-4a78-9df9-5fc6d3e99ddf
 # ╟─31f77545-ba14-41f7-a513-31e6f691e62e
 # ╟─c13e8e8c-5152-49c8-81b3-d8d96563f222
-# ╟─c1d9ebbd-d4be-4f2f-9d05-c348fcfcd09f
-# ╟─a68b5670-724d-422f-99d0-bb4494fbd753
-# ╟─20beb2f7-2b80-445e-ac47-43e6e53d1757
+# ╠═17467962-e92f-4c71-8ab9-6bf60ded4a86
+# ╟─6e0466dc-00da-4701-a6c0-83c75cae559d
+# ╠═20beb2f7-2b80-445e-ac47-43e6e53d1757
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002

@@ -88,7 +88,11 @@ function randomWalkPlot(steps, n, walkers, dist; alpha=.3, size = (1000,1000))
       # Remove parametrization portion of distribution string
       formattedDist = replace(string(dist), r"\{.*?\}" => "")
 
-      p = plot(title = "$formattedDist Distributed Random Walk in $(n)D\n", size=size, alpha=alpha)
+      p = plot(title = "$formattedDist Distributed Random Walk in $(n)D\n",
+               size=size,
+               alpha=alpha,
+               legend = :outertopleft)
+               
 	for (i, path) in enumerate(paths)
 		randomWalkPlot(p, path; color = rand(1:1000), walker = i  )
 	end
