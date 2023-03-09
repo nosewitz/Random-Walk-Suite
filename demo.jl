@@ -24,7 +24,7 @@ begin
 end
 
 # ╔═╡ f63aa280-bba1-11ed-1c22-e3bec77db2a8
-includet("random_walk.jl")
+includet("random_walk.jl");
 
 # ╔═╡ 7c040089-135c-45ac-ab09-97b087f65b99
 # ╠═╡ show_logs = false
