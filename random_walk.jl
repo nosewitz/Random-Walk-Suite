@@ -1,6 +1,9 @@
 using Plots, Distributions
 
 
+
+
+
 function randomWalk(steps::Int, n::Int; rate = 1)
       path = zeros(Int, steps, n)
       # Starting direction
@@ -98,3 +101,47 @@ function randomWalkPlot(steps, n, walkers, dist; alpha=.3, size = (1000,1000))
 	end
 	p
 end
+
+#### Plots.jl animations
+
+abstract type RandomWalk end
+
+mutable struct RandomWalk2D <: RandomWalk
+      x
+      y
+      const dist
+end
+
+mutable struct RandomWalk3D <: RandomWalk
+      x
+      y
+      z
+      const dist
+end
+
+RandomWalk2D(distribution) = RandomWalk2D(zero(eltype(distribution)),zero(eltype(distribution)), distribution)
+RandomWalk3D(distribution) = RandomWalk3D(zero(eltype(distribution)),zero(eltype(distribution)), zero(eltype(distribution)), distribution)
+
+function step!(rw::RandomWalk)
+      field = rand( fieldnames( typeof(rw) )[begin:end-1] )
+      newval = getfield(rw, field) + rand( rw.dist )
+      #@show field, newval
+      setfield!(rw, field, newval)
+end
+
+gr()
+rw = RandomWalk3D(Normal())
+plt = plot3d(
+    1,
+    xlim = (-10, 7),
+    ylim = (-10, 7),
+    zlim = (-10, 7),
+    title = "Random Walk",
+    marker = 2,
+)
+
+t= @animate for i=1:100
+      step!(rw)
+      push!(plt, rw.x, rw.y, rw.z)
+  end
+gif(t, "anim_fps15.gif", fps = 10)
