@@ -23,15 +23,8 @@ begin
 	using Plots, Distributions
 end
 
-# ╔═╡ b7aaa47d-5345-435c-ab3b-ac38d45ba6f7
-using Term
-
 # ╔═╡ f63aa280-bba1-11ed-1c22-e3bec77db2a8
-includet("random_walk.jl");
-
-# ╔═╡ 7c040089-135c-45ac-ab09-97b087f65b99
-# ╠═╡ show_logs = false
-plotly();
+includet("random_walk.jl"); plotly();
 
 # ╔═╡ 059a943d-bd58-44e6-ad7c-d4aa2d3ba361
 
@@ -81,12 +74,23 @@ md"Input parameters $(fieldnames(dist)) for your $dist distribution: $(@bind pr 
 # ╔═╡ a68b5670-724d-422f-99d0-bb4494fbd753
 parameters = pr |> x -> split(x, ",") .|> x -> tryparse(Float64, x);
 
+# ╔═╡ 095d9d8a-c65d-44eb-b1ad-4981b2fbc34c
+begin
+	mydist = dist
+	theme(tema)
+	try 
+		mydist = dist(parameters...);
+
+	catch e
+	end
+end; 
+
 # ╔═╡ 20beb2f7-2b80-445e-ac47-43e6e53d1757
 begin
 	try
 		
-	theme(tema)	
-	Main.randomWalkPlot(steps, dim, walkers, dist(parameters...))
+
+	Main.randomWalkPlot(steps, dim, walkers, mydist)
 	catch e
 		
 		ifelse( isa(e, MethodError),
@@ -98,12 +102,46 @@ begin
 	end
 end
 
-# ╔═╡ e713cbfc-2fb1-4e25-9f3c-88b7a6b50302
-final_dist = dist(parameters...) |> typeof
+# ╔═╡ 6f700dc0-5497-4220-8c99-8ebeda457a81
+begin
+	t = dist
+	try 
+		t = dist(parameters...) |> typeof
+	catch e
+	end
+end;
 
 
-# ╔═╡ 7c1d6881-fad8-4507-9481-f6f459fa1379
-@doc final_dist
+# ╔═╡ e7d3307d-0a1a-454b-bbe4-787354857440
+if t == typeof(mydist) @doc t end
+
+# ╔═╡ bc85b87e-7bba-483b-83cb-c18854f2d878
+md"Step through a distribution"
+
+# ╔═╡ 771ede6d-0048-4060-9a47-9ce2f6d09878
+path = Main.randomWalk(steps, dim, mydist);
+
+
+# ╔═╡ 65b84b31-2cb9-456f-b692-7b0be249e235
+md"Take $(@bind how_many Scrubbable(1:steps, default = 2)) steps in this random walk."
+
+# ╔═╡ 8a88a5ba-d77a-4762-8625-16b5b2f76c50
+begin 
+	if dim == 2
+	@views plot(path[1:how_many,1], path[1:how_many,2],
+	size=(700,700),
+	marker=:circle,
+	markersize = 2)
+	else 
+	@views plot(path[1:how_many,1], path[1:how_many,2], path[1:how_many,3],
+	size=(700,700),
+	marker=:circle,
+	markersize = 1)
+	end
+end
+
+# ╔═╡ 9301707e-3b88-438f-a9bf-e8ffdccb506c
+@bind clicked Button("Hello world")
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
@@ -112,14 +150,12 @@ Distributions = "31c24e10-a181-5473-b8eb-7969acd0382f"
 Plots = "91a5bcdd-55d7-5caf-9e0b-520d859cae80"
 PlutoUI = "7f904dfe-b85e-4ff6-b463-dae2292396a8"
 Revise = "295af30f-e4ad-537b-8983-00126c2a3abe"
-Term = "22787eb5-b846-44ae-b979-8e399b8463ab"
 
 [compat]
 Distributions = "~0.25.86"
 Plots = "~1.38.6"
 PlutoUI = "~0.7.50"
 Revise = "~3.5.1"
-Term = "~2.0.2"
 """
 
 # ╔═╡ 00000000-0000-0000-0000-000000000002
@@ -128,18 +164,13 @@ PLUTO_MANIFEST_TOML_CONTENTS = """
 
 julia_version = "1.8.5"
 manifest_format = "2.0"
-project_hash = "6be2459db59e831a01bfc287f0ee1f23dc18b32d"
+project_hash = "358492590103cd59ac0ebeac490be171f413a96e"
 
 [[deps.AbstractPlutoDingetjes]]
 deps = ["Pkg"]
 git-tree-sha1 = "8eaf9f1b4921132a4cff3f36a1d9ba923b14a481"
 uuid = "6e696c72-6542-2067-7265-42206c756150"
 version = "1.1.4"
-
-[[deps.AbstractTrees]]
-git-tree-sha1 = "faa260e4cb5aba097a73fab382dd4b5819d8ec8c"
-uuid = "1520ce14-60c1-5f80-bbc7-55ef81b5835c"
-version = "0.4.4"
 
 [[deps.ArgTools]]
 uuid = "0dad84c5-d112-42e6-8d28-ef12dabb789f"
@@ -248,11 +279,6 @@ deps = ["Compat", "InteractiveUtils", "OrderedCollections"]
 git-tree-sha1 = "d1fff3a548102f48987a52a2e0d114fa97d730f0"
 uuid = "864edb3b-99cc-5e75-8d2d-829cb0a9cfe8"
 version = "0.18.13"
-
-[[deps.DataValueInterfaces]]
-git-tree-sha1 = "bfc1187b79289637fa0ef6d4436ebdfe6905cbd6"
-uuid = "e2d170a0-9d28-54be-80f0-106bbe20a464"
-version = "1.0.0"
 
 [[deps.Dates]]
 deps = ["Printf"]
@@ -405,12 +431,6 @@ git-tree-sha1 = "129acf094d168394e80ee1dc4bc06ec835e510a3"
 uuid = "2e76f6c2-a576-52d4-95c1-20adfe4de566"
 version = "2.8.1+1"
 
-[[deps.Highlights]]
-deps = ["DocStringExtensions", "InteractiveUtils", "REPL"]
-git-tree-sha1 = "0341077e8a6b9fc1c2ea5edc1e93a956d2aec0c7"
-uuid = "eafb193a-b7ab-5a9e-9068-77385905fa72"
-version = "0.5.2"
-
 [[deps.HypergeometricFunctions]]
 deps = ["DualNumbers", "LinearAlgebra", "OpenLibm_jll", "SpecialFunctions", "Test"]
 git-tree-sha1 = "709d864e3ed6e3545230601f94e11ebc65994641"
@@ -454,11 +474,6 @@ version = "0.1.8"
 git-tree-sha1 = "630b497eafcc20001bba38a4651b327dcfc491d2"
 uuid = "92d709cd-6900-40b7-9082-c6be49f344b6"
 version = "0.2.2"
-
-[[deps.IteratorInterfaceExtensions]]
-git-tree-sha1 = "a3f24677c21f5bbe9d2a714f95dcd58337fb2856"
-uuid = "82899510-4779-5014-852e-03e436cf321d"
-version = "1.0.0"
 
 [[deps.JLFzf]]
 deps = ["Pipe", "REPL", "Random", "fzf_jll"]
@@ -658,11 +673,6 @@ uuid = "a63ad114-7e13-5084-954f-fe012c677804"
 uuid = "14a3606d-f60d-562e-9121-12d972cd8159"
 version = "2022.2.1"
 
-[[deps.MyterialColors]]
-git-tree-sha1 = "01d8466fb449436348999d7c6ad740f8f853a579"
-uuid = "1c23619d-4212-4747-83aa-717207fae70f"
-version = "0.3.0"
-
 [[deps.NaNMath]]
 deps = ["OpenLibm_jll"]
 git-tree-sha1 = "0877504529a3e5c3343c6f8b4c0381e57e4387e4"
@@ -729,12 +739,6 @@ git-tree-sha1 = "67eae2738d63117a196f497d7db789821bce61d1"
 uuid = "90014a1f-27ba-587c-ab20-58faa44d9150"
 version = "0.11.17"
 
-[[deps.Parameters]]
-deps = ["OrderedCollections", "UnPack"]
-git-tree-sha1 = "34c0e9ad262e5f7fc75b10a9952ca7692cfc5fbe"
-uuid = "d96e819e-fc66-5662-9728-84c9c7592b0a"
-version = "0.12.3"
-
 [[deps.Parsers]]
 deps = ["Dates", "SnoopPrecompile"]
 git-tree-sha1 = "478ac6c952fddd4399e71d4779797c538d0ff2bf"
@@ -790,12 +794,6 @@ version = "1.3.0"
 [[deps.Printf]]
 deps = ["Unicode"]
 uuid = "de0858da-6303-5e67-8744-51eddeeeb8d7"
-
-[[deps.ProgressLogging]]
-deps = ["Logging", "SHA", "UUIDs"]
-git-tree-sha1 = "80d919dee55b9c50e8d9e2da5eeafff3fe58b539"
-uuid = "33c8b6b6-d38a-422a-b730-caa89a2f386c"
-version = "0.1.4"
 
 [[deps.Qt5Base_jll]]
 deps = ["Artifacts", "CompilerSupportLibraries_jll", "Fontconfig_jll", "Glib_jll", "JLLWrappers", "Libdl", "Libglvnd_jll", "OpenSSL_jll", "Pkg", "Xorg_libXext_jll", "Xorg_libxcb_jll", "Xorg_xcb_util_image_jll", "Xorg_xcb_util_keysyms_jll", "Xorg_xcb_util_renderutil_jll", "Xorg_xcb_util_wm_jll", "Zlib_jll", "xkbcommon_jll"]
@@ -944,18 +942,6 @@ deps = ["Dates"]
 uuid = "fa267f1f-6049-4f14-aa54-33bafae1ed76"
 version = "1.0.0"
 
-[[deps.TableTraits]]
-deps = ["IteratorInterfaceExtensions"]
-git-tree-sha1 = "c06b2f539df1c6efa794486abfb6ed2022561a39"
-uuid = "3783bdb8-4a98-5b6b-af9a-565f29a5fe9c"
-version = "1.0.1"
-
-[[deps.Tables]]
-deps = ["DataAPI", "DataValueInterfaces", "IteratorInterfaceExtensions", "LinearAlgebra", "OrderedCollections", "TableTraits", "Test"]
-git-tree-sha1 = "1544b926975372da01227b382066ab70e574a3ec"
-uuid = "bd369af6-aec1-5ad0-b16a-f7cc5008161c"
-version = "1.10.1"
-
 [[deps.Tar]]
 deps = ["ArgTools", "SHA"]
 uuid = "a4e569a6-e804-4fa4-b0f3-eef7a1d5b13e"
@@ -966,12 +952,6 @@ deps = ["LinearAlgebra"]
 git-tree-sha1 = "1feb45f88d133a655e001435632f019a9a1bcdb6"
 uuid = "62fd8b95-f654-4bbd-a8a5-9c27f68ccd50"
 version = "0.1.1"
-
-[[deps.Term]]
-deps = ["AbstractTrees", "CodeTracking", "Dates", "Highlights", "InteractiveUtils", "Logging", "Markdown", "MyterialColors", "OrderedCollections", "Parameters", "ProgressLogging", "REPL", "SnoopPrecompile", "Tables", "UUIDs", "Unicode", "UnicodeFun"]
-git-tree-sha1 = "373d65207cb8de6d2e7bd32b89476e760c6edc4d"
-uuid = "22787eb5-b846-44ae-b979-8e399b8463ab"
-version = "2.0.2"
 
 [[deps.Test]]
 deps = ["InteractiveUtils", "Logging", "Random", "Serialization"]
@@ -996,11 +976,6 @@ version = "1.4.2"
 [[deps.UUIDs]]
 deps = ["Random", "SHA"]
 uuid = "cf7118a7-6976-5b1a-9a39-7adc72f591a4"
-
-[[deps.UnPack]]
-git-tree-sha1 = "387c1f73762231e86e0c9c5443ce3b4a0a9a0c2b"
-uuid = "3a884ed6-31ef-47d7-9d2a-63182c4928ed"
-version = "1.0.2"
 
 [[deps.Unicode]]
 uuid = "4ec0a83e-493e-50e2-b9ac-8f72acf5a8f5"
@@ -1249,8 +1224,7 @@ version = "1.4.1+0"
 
 # ╔═╡ Cell order:
 # ╠═66503924-3fc8-4883-8236-f82ab711a329
-# ╠═f63aa280-bba1-11ed-1c22-e3bec77db2a8
-# ╠═7c040089-135c-45ac-ab09-97b087f65b99
+# ╟─f63aa280-bba1-11ed-1c22-e3bec77db2a8
 # ╟─059a943d-bd58-44e6-ad7c-d4aa2d3ba361
 # ╟─cc9a3dae-3ba1-4108-bea1-4cbff7655779
 # ╟─e43367b8-154c-4a78-9df9-5fc6d3e99ddf
@@ -1258,9 +1232,14 @@ version = "1.4.1+0"
 # ╟─c13e8e8c-5152-49c8-81b3-d8d96563f222
 # ╟─c1d9ebbd-d4be-4f2f-9d05-c348fcfcd09f
 # ╠═a68b5670-724d-422f-99d0-bb4494fbd753
+# ╟─095d9d8a-c65d-44eb-b1ad-4981b2fbc34c
 # ╟─20beb2f7-2b80-445e-ac47-43e6e53d1757
-# ╠═e713cbfc-2fb1-4e25-9f3c-88b7a6b50302
-# ╠═7c1d6881-fad8-4507-9481-f6f459fa1379
-# ╟─b7aaa47d-5345-435c-ab3b-ac38d45ba6f7
+# ╟─6f700dc0-5497-4220-8c99-8ebeda457a81
+# ╟─e7d3307d-0a1a-454b-bbe4-787354857440
+# ╟─bc85b87e-7bba-483b-83cb-c18854f2d878
+# ╟─771ede6d-0048-4060-9a47-9ce2f6d09878
+# ╠═65b84b31-2cb9-456f-b692-7b0be249e235
+# ╠═8a88a5ba-d77a-4762-8625-16b5b2f76c50
+# ╠═9301707e-3b88-438f-a9bf-e8ffdccb506c
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002

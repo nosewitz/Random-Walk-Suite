@@ -1,9 +1,5 @@
 using Plots, Distributions
 
-
-
-
-
 function randomWalk(steps::Int, n::Int; rate = 1)
       path = zeros(Int, steps, n)
       # Starting direction
@@ -103,7 +99,7 @@ function randomWalkPlot(steps, n, walkers, dist; alpha=.3, size = (1000,1000))
 end
 
 #### Plots.jl animations
-
+#=
 abstract type RandomWalk end
 
 mutable struct RandomWalk2D <: RandomWalk
@@ -145,3 +141,4 @@ t= @animate for i=1:100
       push!(plt, rw.x, rw.y, rw.z)
   end
 gif(t, "anim_fps15.gif", fps = 10)
+=#
