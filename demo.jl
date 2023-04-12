@@ -21,10 +21,39 @@ end
 begin
 	using Revise, PlutoUI
 	using Plots, Distributions
+	md"""# Random Walk Visualization Suite
+			by Alejandro Capecchi, written in Julia"""
 end
 
+# ╔═╡ e0f1f5f0-b3bb-4459-b7b6-644ac250073a
+md"""#### Quick Summary:
+
+	"In mathematics, a random walk is a random process that describes a path that consists of a succession of random steps on some mathematical space."
+
+Imagine you're standing on a street corner in a city, and you want to explore the area around you by taking steps in random directions. A random walk is like taking a step in a random direction every time you decide to make a move.
+
+So, you take your first step in a random direction - let's say, you turn left and walk ten paces. Then, you take another step in a random direction - this time, you turn right and walk five paces. You continue taking these random steps, sometimes turning left, sometimes turning right, sometimes taking a few steps forward, sometimes taking a few steps back.
+
+Now pretend you are a bird flying around in the sky, and it wants to explore the area around it by taking random movements in any direction, including up or down. This is now 3D space, so we are performing a 3D random walk. And if you were curious, a 1D walk could be thought of as the sum of a random variable X, depicting the result of a coin flip where heads = 1 and tails = -1.
+
+As you continue your random walk, you might end up back at the starting point, or you might end up far away from where you began. Just like a person taking a random walk, there's no way to predict exactly where you'll end up - it's all determined by chance.
+
+Step size is something that can be distributed according to many of our beloved probability distributions. For example, a Gaussian random walk is simply one where each step's magnitude is determined by a Normal distribution. This notebook has about 50 distributions to pick from, all provided by the Distributions.jl package.
+
+Random walks can be used to model a variety of natural phenomena, like the movement of particles in a gas, the fluctuations of stock prices, or the spread of diseases in a population. By understanding the patterns that emerge from these random movements, scientists can better understand the underlying processes at work.
+"""
+
+# ╔═╡ 2e443496-bc66-413a-b206-d0f6185ac118
+md""" 
+#### Functionality
+
+---
+	1. Displaying up to 5 random walks following a step size that is distributed according to your distribution of choice, with N steps in D dimensions.
+---
+	  2. Showcasing a step-by-step run of a random walk you picked earlier. This allows an easy visual demo of how a path may look in 2 or 3 dimensions. """
+
 # ╔═╡ f63aa280-bba1-11ed-1c22-e3bec77db2a8
-includet("random_walk.jl"); plotly();
+includet("random_walk.jl"); plotly(); md"""### Choose your settings:"""
 
 # ╔═╡ 059a943d-bd58-44e6-ad7c-d4aa2d3ba361
 
@@ -45,7 +74,7 @@ md"Select a theme: $(@bind tema Select([:default,
 :vibrant,
 :mute,
 :dao,
-:dracula]))"
+:dracula]))" 
 
 # ╔═╡ cc9a3dae-3ba1-4108-bea1-4cbff7655779
 md"Choose the number of steps for each walker:  $(@bind steps NumberField(10:10:100000) )"
@@ -65,32 +94,31 @@ md"""Choose a distribution (or none for discrete jumps): $(@bind dist Select([co
 end
 
 # ╔═╡ c13e8e8c-5152-49c8-81b3-d8d96563f222
-md"Choose the number of random walkers: $(@bind walkers NumberField(1:5, default=1))"
+md"Choose the number of random walkers (how many walks): $(@bind walkers NumberField(1:5, default=1))"
 
 # ╔═╡ c1d9ebbd-d4be-4f2f-9d05-c348fcfcd09f
 md"Input parameters $(fieldnames(dist)) for your $dist distribution: $(@bind pr TextField()) )"
 
 
-# ╔═╡ a68b5670-724d-422f-99d0-bb4494fbd753
-parameters = pr |> x -> split(x, ",") .|> x -> tryparse(Float64, x);
-
 # ╔═╡ 095d9d8a-c65d-44eb-b1ad-4981b2fbc34c
 begin
+	parameters = pr |> x -> split(x, ",") .|> x -> tryparse(Float64, x);
 	mydist = dist
-	theme(tema)
+	rw3 = nothing
 	try 
-		mydist = dist(parameters...);
-
+		global mydist = dist(parameters...);
+		global rw3 = Main.getRW(mydist, dim, steps, walkers)
 	catch e
 	end
-end; 
+	md"# Graph of all Walkers "
+end 
 
 # ╔═╡ 20beb2f7-2b80-445e-ac47-43e6e53d1757
 begin
 	try
-		
+	theme(tema)
 
-	Main.randomWalkPlot(steps, dim, walkers, mydist)
+	Main.randomWalkPlot(rw3)
 	catch e
 		
 		ifelse( isa(e, MethodError),
@@ -106,10 +134,11 @@ end
 begin
 	t = dist
 	try 
-		t = dist(parameters...) |> typeof
+		global t = dist(parameters...) |> typeof
 	catch e
 	end
-end;
+	md"## Distribution Definition "
+end
 
 
 # ╔═╡ e7d3307d-0a1a-454b-bbe4-787354857440
@@ -119,29 +148,42 @@ if t == typeof(mydist) @doc t end
 md"Step through a distribution"
 
 # ╔═╡ 771ede6d-0048-4060-9a47-9ce2f6d09878
-path = Main.randomWalk(steps, dim, mydist);
-
+begin
+ path = nothing
+ try 
+	 global path = rw3.Path[1]
+ catch e
+	e
+ end
+md"""# Step Through a Random Walk"""
+end
 
 # ╔═╡ 65b84b31-2cb9-456f-b692-7b0be249e235
 md"Take $(@bind how_many Scrubbable(1:steps, default = 2)) steps in this random walk."
 
 # ╔═╡ 8a88a5ba-d77a-4762-8625-16b5b2f76c50
 begin 
+	try
 	if dim == 2
 	@views plot(path[1:how_many,1], path[1:how_many,2],
 	size=(700,700),
 	marker=:circle,
-	markersize = 2)
+	markersize = 2,
+	title = "Random Walk with $how_many Steps")
 	else 
 	@views plot(path[1:how_many,1], path[1:how_many,2], path[1:how_many,3],
 	size=(700,700),
 	marker=:circle,
-	markersize = 1)
+	markersize = 1,
+	title = "Random Walk with $how_many Steps")
+	end
+	catch e
+	e
 	end
 end
 
-# ╔═╡ 9301707e-3b88-438f-a9bf-e8ffdccb506c
-@bind clicked Button("Hello world")
+# ╔═╡ 1a77ea86-13ec-419e-8089-ad01bc7283a1
+
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
@@ -1223,7 +1265,9 @@ version = "1.4.1+0"
 """
 
 # ╔═╡ Cell order:
-# ╠═66503924-3fc8-4883-8236-f82ab711a329
+# ╟─66503924-3fc8-4883-8236-f82ab711a329
+# ╟─e0f1f5f0-b3bb-4459-b7b6-644ac250073a
+# ╟─2e443496-bc66-413a-b206-d0f6185ac118
 # ╟─f63aa280-bba1-11ed-1c22-e3bec77db2a8
 # ╟─059a943d-bd58-44e6-ad7c-d4aa2d3ba361
 # ╟─cc9a3dae-3ba1-4108-bea1-4cbff7655779
@@ -1231,15 +1275,14 @@ version = "1.4.1+0"
 # ╟─31f77545-ba14-41f7-a513-31e6f691e62e
 # ╟─c13e8e8c-5152-49c8-81b3-d8d96563f222
 # ╟─c1d9ebbd-d4be-4f2f-9d05-c348fcfcd09f
-# ╠═a68b5670-724d-422f-99d0-bb4494fbd753
 # ╟─095d9d8a-c65d-44eb-b1ad-4981b2fbc34c
 # ╟─20beb2f7-2b80-445e-ac47-43e6e53d1757
 # ╟─6f700dc0-5497-4220-8c99-8ebeda457a81
 # ╟─e7d3307d-0a1a-454b-bbe4-787354857440
 # ╟─bc85b87e-7bba-483b-83cb-c18854f2d878
 # ╟─771ede6d-0048-4060-9a47-9ce2f6d09878
-# ╠═65b84b31-2cb9-456f-b692-7b0be249e235
-# ╠═8a88a5ba-d77a-4762-8625-16b5b2f76c50
-# ╠═9301707e-3b88-438f-a9bf-e8ffdccb506c
+# ╟─65b84b31-2cb9-456f-b692-7b0be249e235
+# ╟─8a88a5ba-d77a-4762-8625-16b5b2f76c50
+# ╠═1a77ea86-13ec-419e-8089-ad01bc7283a1
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002

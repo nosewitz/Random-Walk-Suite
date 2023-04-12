@@ -98,6 +98,32 @@ function randomWalkPlot(steps, n, walkers, dist; alpha=.3, size = (1000,1000))
 	p
 end
 
+struct RW
+      Dist
+      Dim
+      Steps
+      Walkers
+      Path
+end
+
+getRW(Dist, Dims, Steps, Walkers) = RW(Dist, Dims, Steps, Walkers, randomWalk(Steps, Dims, Walkers, Dist))
+
+function randomWalkPlot(rw::RW)
+      paths = rw.Path
+
+      # Remove parametrization portion of distribution string
+      formattedDist = replace(string(rw.Dist), r"\{.*?\}" => "")
+
+      p = plot(title = "$formattedDist Distributed Random Walk in $(rw.Dim)D\n";
+            legend = :outertopleft)
+            
+      for (i, path) in enumerate(paths)
+            randomWalkPlot(p, path; color = rand(1:1000), walker = i  )
+      end
+      p
+end
+
+
 #### Plots.jl animations
 #=
 abstract type RandomWalk end
