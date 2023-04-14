@@ -144,9 +144,6 @@ end
 # ╔═╡ e7d3307d-0a1a-454b-bbe4-787354857440
 if t == typeof(mydist) @doc t end
 
-# ╔═╡ bc85b87e-7bba-483b-83cb-c18854f2d878
-md"Step through a distribution"
-
 # ╔═╡ 771ede6d-0048-4060-9a47-9ce2f6d09878
 begin
  path = nothing
@@ -1279,7 +1276,6 @@ version = "1.4.1+0"
 # ╟─20beb2f7-2b80-445e-ac47-43e6e53d1757
 # ╟─6f700dc0-5497-4220-8c99-8ebeda457a81
 # ╟─e7d3307d-0a1a-454b-bbe4-787354857440
-# ╟─bc85b87e-7bba-483b-83cb-c18854f2d878
 # ╟─771ede6d-0048-4060-9a47-9ce2f6d09878
 # ╟─65b84b31-2cb9-456f-b692-7b0be249e235
 # ╟─8a88a5ba-d77a-4762-8625-16b5b2f76c50
