@@ -161,26 +161,25 @@ md"Take $(@bind how_many Scrubbable(1:steps, default = 2)) steps in this random 
 # ╔═╡ 8a88a5ba-d77a-4762-8625-16b5b2f76c50
 begin 
 	try
+
+	settings = (size=(700,700),
+	marker=:circle,
+	legend=:none,
+	title = "Random Walk with $how_many Steps")
+		
 	if dim == 2
-	@views plot(path[1:how_many,1], path[1:how_many,2],
-	size=(700,700),
-	marker=:circle,
-	markersize = 2,
-	title = "Random Walk with $how_many Steps")
+	@views plot(path[1:how_many,1], path[1:how_many,2];
+	settings...,
+	markersize = 2)
 	else 
-	@views plot(path[1:how_many,1], path[1:how_many,2], path[1:how_many,3],
-	size=(700,700),
-	marker=:circle,
-	markersize = 1,
-	title = "Random Walk with $how_many Steps")
+	@views plot(path[1:how_many,1], path[1:how_many,2], path[1:how_many,3];
+	settings...,
+	markersize = 1)
 	end
 	catch e
 	e
 	end
 end
-
-# ╔═╡ 1a77ea86-13ec-419e-8089-ad01bc7283a1
-
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
@@ -1279,6 +1278,5 @@ version = "1.4.1+0"
 # ╟─771ede6d-0048-4060-9a47-9ce2f6d09878
 # ╟─65b84b31-2cb9-456f-b692-7b0be249e235
 # ╟─8a88a5ba-d77a-4762-8625-16b5b2f76c50
-# ╠═1a77ea86-13ec-419e-8089-ad01bc7283a1
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
